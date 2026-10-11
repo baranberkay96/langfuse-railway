@@ -1,6 +1,6 @@
 # Deploy and Host Langfuse with Railway
 
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/langfuse-v4-llm-observability-stack)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/langfuse-v4-llm-observability-stack?referralCode=20H68q)
 
 Langfuse is an open-source LLM engineering platform for tracing, evaluating and cost-tracking LLM applications and agents. This community template deploys the complete Langfuse v4 stack on Railway: web app, background worker, ClickHouse, Postgres, Redis and a Railway Bucket, with the first organization, project, API keys and admin account created automatically.
 
