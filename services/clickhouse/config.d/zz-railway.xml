@@ -1,0 +1,48 @@
+<!--
+  Railway overrides for a single-node ClickHouse that backs Langfuse.
+  Based on the ClickHouse "usage recommendations" for hosts with less than 16 GB RAM:
+  smaller caches and no high-churn system log tables (they keep background merges
+  busy and grow the volume without a TTL).
+-->
+<clickhouse>
+    <!-- Caches (defaults assume a large dedicated server) -->
+    <mark_cache_size>536870912</mark_cache_size>               <!-- 512 MiB -->
+    <index_mark_cache_size>134217728</index_mark_cache_size>   <!-- 128 MiB -->
+    <uncompressed_cache_size>134217728</uncompressed_cache_size>
+    <max_server_memory_usage_to_ram_ratio>0.8</max_server_memory_usage_to_ram_ratio>
+
+    <!-- Logs: warnings and above, also to stdout so they show in Railway logs.
+         File logs stay small because the container filesystem is ephemeral. -->
+    <logger>
+        <level>warning</level>
+        <console>1</console>
+        <size>100M</size>
+        <count>3</count>
+    </logger>
+
+    <!-- High-volume system log tables: disabled -->
+    <trace_log remove="1"/>
+    <text_log remove="1"/>
+    <metric_log remove="1"/>
+    <asynchronous_metric_log remove="1"/>
+    <query_thread_log remove="1"/>
+    <query_views_log remove="1"/>
+    <processors_profile_log remove="1"/>
+    <opentelemetry_span_log remove="1"/>
+    <latency_log remove="1"/>
+    <query_metric_log remove="1"/>
+
+    <!-- Keep query_log and part_log for troubleshooting, but expire them after 7 days -->
+    <query_log replace="1">
+        <database>system</database>
+        <table>query_log</table>
+        <engine>ENGINE = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 7 DAY DELETE</engine>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </query_log>
+    <part_log replace="1">
+        <database>system</database>
+        <table>part_log</table>
+        <engine>ENGINE = MergeTree PARTITION BY event_date ORDER BY event_time TTL event_date + INTERVAL 7 DAY DELETE</engine>
+        <flush_interval_milliseconds>7500</flush_interval_milliseconds>
+    </part_log>
+</clickhouse>
