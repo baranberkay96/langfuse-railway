@@ -48,7 +48,7 @@ Self-hosted Langfuse v4 is not a single container. The web service receives trac
 1. Enter your email in `LANGFUSE_INIT_USER_EMAIL` when deploying (the only required input).
 2. Wait for `langfuse-web` to become healthy (first start runs database migrations and can take several minutes).
 3. Open the web domain and sign in with that email and the generated `LANGFUSE_INIT_USER_PASSWORD` from the `langfuse-web` variables. Change the password in your profile.
-4. Use `LANGFUSE_INIT_PROJECT_PUBLIC_KEY` and `LANGFUSE_INIT_PROJECT_SECRET_KEY` with `LANGFUSE_HOST=https://<your-web-domain>` in the Langfuse SDKs.
+4. Use `LANGFUSE_INIT_PROJECT_PUBLIC_KEY` and `LANGFUSE_INIT_PROJECT_SECRET_KEY` with `LANGFUSE_HOST=https://{your-web-domain}` in the Langfuse SDKs.
 
 Public sign-up is disabled (`AUTH_DISABLE_SIGNUP=true`). To let invited teammates create accounts, set it to `false`, invite them, and switch it back once they have joined.
 
