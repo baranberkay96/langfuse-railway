@@ -1,5 +1,6 @@
 {
   "name": "Langfuse v4 LLM Observability Stack",
+  "idSeed": "Langfuse v4 LLM Observability Stack / 2026-11-07",
   "description": "Trace, evaluate and cost-track every LLM call. Langfuse v4 with ClickHouse.",
   "category": "AI/ML",
   "tags": [
@@ -20,7 +21,8 @@
     "langfuse-web": {
       "icon": "https://langfuse.com/icon.svg",
       "source": {
-        "image": "langfuse/langfuse:4.56.0"
+        "repo": "baranberkay96/langfuse-railway",
+        "rootDirectory": "/services/langfuse-web"
       },
       "startCommand": null,
       "preDeployCommand": null,

@@ -56,7 +56,7 @@ Only `langfuse-web` is public. Everything else talks over Railway private networ
 
 Next.js app + public API. Runs Postgres and ClickHouse migrations on start and performs headless initialization.
 
-- Source: image `langfuse/langfuse:4.56.0`
+- Source: repo `baranberkay96/langfuse-railway`, `rootDirectory` `/services/langfuse-web`: `FROM langfuse/langfuse:4.56.0@sha256:b1948c7c…` unchanged plus `railway-heap.sh`, which sets `--max-old-space-size` to 75% of the container memory limit when that limit is 2 GiB or less (`LANGFUSE_NODE_HEAP_MB` overrides). Found 2026-11-07: at the Trial plan's 1 GB the image's default heap ran out right after start ("JavaScript heap out of memory", deploy FAILED, template health 0%); with 768 MiB it starts and settles at ~0.94 GB.
 - Start command: image default
 - Pre-deploy command: none
 - Healthcheck: `/api/public/ready` (timeout 600 s)

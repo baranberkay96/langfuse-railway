@@ -38,7 +38,7 @@ Self-hosted Langfuse v4 is not a single container. The web service receives trac
 
 | Service | Role | Public | Storage |
 |---|---|---|---|
-| langfuse-web | UI, public API, OTLP endpoint, migrations | Yes (port 3000) | – |
+| langfuse-web | UI, public API, OTLP endpoint, migrations (upstream image plus a start script that sizes the Node heap) | Yes (port 3000) | – |
 | langfuse-worker | Queue processing, evaluations, exports | No | – |
 | ClickHouse | Traces, observations, scores | No | Volume `/var/lib/clickhouse` |
 | Postgres | Users, projects, prompts, keys | No | Volume |
@@ -50,13 +50,15 @@ Self-hosted Langfuse v4 is not a single container. The web service receives trac
 1. Enter your email in `LANGFUSE_INIT_USER_EMAIL` when deploying (the only required input).
 2. Wait for `langfuse-web` to become healthy (first start runs database migrations and can take several minutes).
 3. Open the web domain and sign in with that email and the generated `LANGFUSE_INIT_USER_PASSWORD` from the `langfuse-web` variables. Change the password in your profile.
-4. Use `LANGFUSE_INIT_PROJECT_PUBLIC_KEY` and `LANGFUSE_INIT_PROJECT_SECRET_KEY` with `LANGFUSE_HOST=https://{your-web-domain}` in the Langfuse SDKs.
+4. Use `LANGFUSE_INIT_PROJECT_PUBLIC_KEY` and `LANGFUSE_INIT_PROJECT_SECRET_KEY` with `LANGFUSE_HOST=https://{your-web-domain}` in the Langfuse SDKs. Langfuse v4 accepts traces from v4 SDKs and OpenTelemetry (`/api/public/otel`); the legacy `/api/public/ingestion` endpoint only takes scores.
 
 Public sign-up is disabled (`AUTH_DISABLE_SIGNUP=true`). To let invited teammates create accounts, set it to `false`, invite them, and switch it back once they have joined.
 
+**Plans and memory:** each service fits the Trial plan's 1 GB limit. At 2 GB of service memory or less, a start script sets the web service's Node heap to 75% of the limit, because Node's default is too small there and web would stop with "JavaScript heap out of memory"; set `LANGFUSE_NODE_HEAP_MB` to override it. The Free plan's 0.5 GB per service is too small for Langfuse. Hobby or Pro is recommended for regular use.
+
 **Scaling:** add replicas to `langfuse-worker` for higher ingestion throughput and to `langfuse-web` for more API/UI traffic; both are stateless. ClickHouse scales vertically (more RAM/CPU) on Railway.
 
-**Pinning and upgrades:** web and worker are pinned to `4.56.0`; always upgrade both to the same version. Change the image tag on both services, check the Langfuse changelog for breaking changes, and redeploy; migrations run automatically on web start. ClickHouse is pinned in `services/clickhouse/Dockerfile`.
+**Pinning and upgrades:** web and worker are pinned to `4.56.0`; always upgrade both to the same version. Change the image tag in `services/langfuse-web/Dockerfile` (tag and digest) and on `langfuse-worker`, check the Langfuse changelog for breaking changes, and redeploy; migrations run automatically on web start. ClickHouse is pinned in `services/clickhouse/Dockerfile`.
 
 ### Why Deploy Langfuse on Railway?
 
