@@ -54,7 +54,7 @@ Self-hosted Langfuse v4 is not a single container. The web service receives trac
 
 Public sign-up is disabled (`AUTH_DISABLE_SIGNUP=true`). To let invited teammates create accounts, set it to `false`, invite them, and switch it back once they have joined.
 
-**Plans and memory:** each service fits the Trial plan's 1 GB limit. At 2 GB of service memory or less, a start script sets the web service's Node heap to 75% of the limit, because Node's default is too small there and web would stop with "JavaScript heap out of memory"; set `LANGFUSE_NODE_HEAP_MB` to override it. The Free plan's 0.5 GB per service is too small for Langfuse. Hobby or Pro is recommended for regular use.
+**Plans and memory:** use the Hobby or Pro plan. `langfuse-web` needs at least 1.5 GB of memory (its live heap is about 720 MB right after start), so Railway's Trial (1 GB per service) and Free (0.5 GB) plans cannot run it: web stops with "JavaScript heap out of memory" and the log says why. When a service is limited to 2 GB or less, a start script sets the Node heap to 75% of the limit, because Node's default is too small there; `LANGFUSE_NODE_HEAP_MB` overrides it.
 
 **Scaling:** add replicas to `langfuse-worker` for higher ingestion throughput and to `langfuse-web` for more API/UI traffic; both are stateless. ClickHouse scales vertically (more RAM/CPU) on Railway.
 

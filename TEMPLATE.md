@@ -56,7 +56,7 @@ Only `langfuse-web` is public. Everything else talks over Railway private networ
 
 Next.js app + public API. Runs Postgres and ClickHouse migrations on start and performs headless initialization.
 
-- Source: repo `baranberkay96/langfuse-railway`, `rootDirectory` `/services/langfuse-web`: `FROM langfuse/langfuse:4.56.0@sha256:b1948c7c…` unchanged plus `railway-heap.sh`, which sets `--max-old-space-size` to 75% of the container memory limit when that limit is 2 GiB or less (`LANGFUSE_NODE_HEAP_MB` overrides). Found 2026-11-07: at the Trial plan's 1 GB the image's default heap ran out right after start ("JavaScript heap out of memory", deploy FAILED, template health 0%); with 768 MiB it starts and settles at ~0.94 GB.
+- Source: repo `baranberkay96/langfuse-railway`, `rootDirectory` `/services/langfuse-web`: `FROM langfuse/langfuse:4.56.0@sha256:b1948c7c…` unchanged plus `railway-heap.sh`, which sets `--max-old-space-size` to 75% of the container memory limit when that limit is 2 GiB or less (`LANGFUSE_NODE_HEAP_MB` overrides). Found 2026-11-07: at the Trial plan's 1 GB the image's default heap ran out right after start ("JavaScript heap out of memory", deploy FAILED, template health 0%); with 768 MiB it starts and settles at ~0.94 GB; but at 714 MiB (Railway's "1 GB" is 953 MiB) it crash-looped 8× in 5 min, with ~712 MiB live after GC at ~26 s. Langfuse web cannot run below ~1.5 GiB, so Trial/Free cannot run this template; the script logs that and the README requires Hobby.
 - Start command: image default
 - Pre-deploy command: none
 - Healthcheck: `/api/public/ready` (timeout 600 s)
